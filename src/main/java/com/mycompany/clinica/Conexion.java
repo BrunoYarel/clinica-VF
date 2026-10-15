@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 public final class Conexion {
 
     private static final Logger LOGGER = Logger.getLogger(Conexion.class.getName());
-
     private static final String BASE_DATOS = "clinica"; // Reemplaza por el nombre real de tu BD
     private static final String USUARIO = "root";
     private static final String[] PUERTOS = {"3306", "3307"}; // estándar y alterno de XAMPP

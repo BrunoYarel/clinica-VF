@@ -21,7 +21,7 @@ public class FrmMedicamento extends javax.swing.JInternalFrame {
             if (con != null) {
                 try (java.sql.PreparedStatement ps = con.prepareStatement(sql);
                      java.sql.ResultSet rs = ps.executeQuery()) {
-                    
+
                     while (rs.next()) {
                         Object[] fila = new Object[2];
                         fila[0] = rs.getString("nombre");
@@ -39,12 +39,12 @@ public class FrmMedicamento extends javax.swing.JInternalFrame {
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        txtNombre = new javax.swing.JTextField();
-        txtPresentacion = new javax.swing.JTextField();
-        btnGuardar = new javax.swing.JButton();
-        
+        jLabel1 = Estilo.texto("", java.awt.Font.BOLD, 12, Estilo.TEXTO_SUAVE);
+        jLabel2 = Estilo.texto("", java.awt.Font.BOLD, 12, Estilo.TEXTO_SUAVE);
+        txtNombre = Estilo.campoTexto();
+        txtPresentacion = Estilo.campoTexto();
+        btnGuardar = Estilo.botonPrimario("");
+
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaMedicamentos = new javax.swing.JTable();
 
@@ -58,7 +58,7 @@ public class FrmMedicamento extends javax.swing.JInternalFrame {
 
         jLabel2.setText("Presentación:");
 
-        btnGuardar.setText("GUARDAR MEDICAMENTO");
+        btnGuardar.setText("Guardar medicamento");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGuardarActionPerformed(evt);
@@ -67,8 +67,8 @@ public class FrmMedicamento extends javax.swing.JInternalFrame {
 
         // Configuración estructural de la JTable
         modeloTabla = new DefaultTableModel(
-            new Object [][] {},
-            new String [] { "Nombre del Medicamento", "Presentación" }
+                new Object [][] {},
+                new String [] { "Nombre del Medicamento", "Presentación" }
         ) {
             boolean[] canEdit = new boolean [] { false, false };
             @Override
@@ -78,49 +78,52 @@ public class FrmMedicamento extends javax.swing.JInternalFrame {
         };
         tablaMedicamentos.setModel(modeloTabla);
         jScrollPane1.setViewportView(tablaMedicamentos);
+        Estilo.tabla(tablaMedicamentos, jScrollPane1);   // diseño de la tabla (viene de Estilo)
 
         // Layout editado para organizar las cajas y la tabla horizontalmente
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(30, 30, 30)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-                            .addComponent(txtPresentacion))))
-                .addContainerGap(40, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(40, 40, 40)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel1)
+                                                        .addComponent(jLabel2))
+                                                .addGap(30, 30, 30)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                                                        .addComponent(txtPresentacion))))
+                                .addContainerGap(40, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtPresentacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(35, 35, 35)
-                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(40, 40, 40)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel1)
+                                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(25, 25, 25)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel2)
+                                        .addComponent(txtPresentacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(35, 35, 35)
+                                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(25, 25, 25)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(40, Short.MAX_VALUE))
         );
 
-        pack();
-    }                       
+        Estilo.ventanaModulo(this, "Gestión de medicamentos", "Registra medicamentos y consulta el catálogo");
 
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        pack();
+    }
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
         String nombre = txtNombre.getText().trim();
         String presentacion = txtPresentacion.getText().trim();
 
@@ -133,23 +136,23 @@ public class FrmMedicamento extends javax.swing.JInternalFrame {
 
         try {
             java.sql.Connection con = Conexion.conectar();
-            
+
             if (con == null) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Error: No se pudo conectar a MySQL. Verifica XAMPP.");
                 return;
             }
-            
+
             try (java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setString(1, nombre);
                 ps.setString(2, presentacion);
-                
+
                 ps.executeUpdate(); // Inserta en la Base de Datos
-                
+
                 javax.swing.JOptionPane.showMessageDialog(this, "¡Medicamento guardado correctamente!");
-                
+
                 txtNombre.setText("");
                 txtPresentacion.setText("");
-                
+
                 listarMedicamentos(); // Actualiza la lista en pantalla automáticamente
             }
             con.close();
@@ -157,7 +160,7 @@ public class FrmMedicamento extends javax.swing.JInternalFrame {
         } catch (java.sql.SQLException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Error de base de datos: " + e.getMessage());
         }
-    }                                          
+    }
 
     // Declaración final de componentes y variables
     private javax.swing.JButton btnGuardar;
@@ -166,5 +169,5 @@ public class FrmMedicamento extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tablaMedicamentos;
     private javax.swing.JTextField txtPresentacion;
-    private javax.swing.JTextField txtNombre;                 
+    private javax.swing.JTextField txtNombre;
 }

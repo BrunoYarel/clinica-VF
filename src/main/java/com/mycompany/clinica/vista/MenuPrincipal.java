@@ -291,6 +291,7 @@ public class MenuPrincipal extends JFrame {
     private void abrirInternoEn(String titulo, JInternalFrame interno) {
         JFrame contenedor = new JFrame(titulo);
         JDesktopPane escritorio = new JDesktopPane();
+        escritorio.setBackground(Estilo.FONDO);   // el fondo de los módulos de Óscar combina con el resto
         contenedor.setContentPane(escritorio);
         contenedor.setSize(1100, 650);
         contenedor.setLocationRelativeTo(null);

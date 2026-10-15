@@ -7,6 +7,7 @@ import java.awt.event.FocusEvent;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.table.JTableHeader;
 
 /**
  * Aquí vive TODO el diseño de la aplicación: colores, fuentes y los componentes
@@ -332,5 +333,64 @@ public final class Estilo {
         lbl.setForeground(Color.WHITE);
         lbl.setPreferredSize(new Dimension(tamanio, tamanio));
         return lbl;
+    }
+
+    // ======================= MÓDULOS DE LOS COMPAÑEROS =======================
+    // Estas tres piezas dejan cualquier módulo con el mismo aspecto que "Gestión de usuarios"
+    // sin tocar su lógica: se llaman desde initComponents() y listo.
+
+    /**
+     * Da a una tabla (y a su JScrollPane) el aspecto de la lista de usuarios:
+     * encabezado azul oscuro, filas de 32 px y selección turquesa clara.
+     * Ejemplo: Estilo.tabla(jTable1, jScrollPane1)
+     */
+    public static void tabla(JTable tbl, JScrollPane scroll) {
+        tbl.setFont(fuente(Font.PLAIN, 13));
+        tbl.setForeground(TEXTO);
+        tbl.setRowHeight(32);
+        tbl.setShowVerticalLines(false);
+        tbl.setGridColor(BORDE);
+        tbl.setSelectionBackground(TEXTO_CLARO);
+        tbl.setSelectionForeground(TEXTO);
+
+        JTableHeader encabezado = tbl.getTableHeader();
+        encabezado.setFont(fuente(Font.BOLD, 13));
+        encabezado.setBackground(AZUL_OSCURO);
+        encabezado.setForeground(Color.WHITE);
+        encabezado.setPreferredSize(new Dimension(0, 36));
+
+        scroll.setBorder(BorderFactory.createLineBorder(BORDE, 1));
+        scroll.getViewport().setBackground(Color.WHITE);
+    }
+
+    /** Franja superior de un módulo: logo + título + subtítulo sobre el degradado (versión compacta). */
+    public static JPanel cabecera(String titulo, String subtitulo) {
+        JPanel titulos = new JPanel(new GridLayout(2, 1, 0, 2));
+        titulos.setOpaque(false);
+        titulos.add(texto(titulo, Font.BOLD, 20, Color.WHITE));
+        titulos.add(texto(subtitulo, Font.PLAIN, 12, TEXTO_CLARO));
+
+        JPanel cabecera = panelDegradado(PRIMARIO_OSCURO, AZUL, 0);
+        cabecera.setLayout(new BorderLayout(14, 0));
+        cabecera.setBorder(BorderFactory.createEmptyBorder(14, 24, 14, 24));
+        cabecera.add(logo(40, Color.WHITE, PRIMARIO_OSCURO), BorderLayout.WEST);
+        cabecera.add(titulos, BorderLayout.CENTER);
+        return cabecera;
+    }
+
+    /**
+     * Viste una ventana interna (JInternalFrame) con la cabecera degradada y el fondo gris claro.
+     * Se llama UNA sola vez al final de initComponents(), justo antes de pack(): el formulario que
+     * ya estaba armado no se toca, solo se coloca debajo de la cabecera.
+     * Ejemplo: Estilo.ventanaModulo(this, "Gestión de médicos", "Registra médicos y su especialidad")
+     */
+    public static void ventanaModulo(JInternalFrame ventana, String titulo, String subtitulo) {
+        Container formulario = ventana.getContentPane();   // el panel que ya trae el formulario del módulo
+        formulario.setBackground(FONDO);
+
+        JPanel raiz = new JPanel(new BorderLayout());
+        raiz.add(cabecera(titulo, subtitulo), BorderLayout.NORTH);
+        raiz.add(formulario, BorderLayout.CENTER);
+        ventana.setContentPane(raiz);
     }
 }
