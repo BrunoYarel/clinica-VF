@@ -19,7 +19,7 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         initComponents();
         txtIdAtencion.setEnabled(false);
         tblAtenciones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         cargarCitasPendientes();
         listarAtenciones();
         estadoInicial();
@@ -74,13 +74,13 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         cboCita.removeAllItems();
         citasMap.clear();
         String sql = "SELECT c.id_cita, CONCAT('Cita #', c.id_cita, ' - Paciente: ', p.nombres, ' ', p.apellidos) AS descripcion " +
-                     "FROM cita c INNER JOIN paciente p ON c.id_paciente = p.id_paciente " +
-                     "WHERE c.estado IN ('Pendiente', 'Programada', 'En Espera')";
-        
+                "FROM cita c INNER JOIN paciente p ON c.id_paciente = p.id_paciente " +
+                "WHERE c.estado IN ('Pendiente', 'Programada', 'En Espera')";
+
         try (Connection cn = Conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            
+
             while (rs.next()) {
                 int idCita = rs.getInt("id_cita");
                 String desc = rs.getString("descripcion");
@@ -94,7 +94,7 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
 
     private void listarAtenciones() {
         DefaultTableModel modelo = new DefaultTableModel(
-            new Object[]{"ID Atención", "ID Cita", "Fecha/Hora", "Síntomas", "Diagnóstico", "Observaciones"}, 0
+                new Object[]{"ID Atención", "ID Cita", "Fecha/Hora", "Síntomas", "Diagnóstico", "Observaciones"}, 0
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -103,7 +103,7 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         };
 
         String sql = "SELECT id_atencion, id_cita, fecha_hora_atencion, sintomas, diagnostico, observaciones " +
-                     "FROM atencion ORDER BY id_atencion DESC";
+                "FROM atencion ORDER BY id_atencion DESC";
 
         try (Connection cn = Conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql);
@@ -111,12 +111,12 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
 
             while (rs.next()) {
                 Object[] fila = {
-                    rs.getInt("id_atencion"),
-                    rs.getInt("id_cita"),
-                    rs.getString("fecha_hora_atencion"),
-                    rs.getString("sintomas"),
-                    rs.getString("diagnostico"),
-                    rs.getString("observaciones")
+                        rs.getInt("id_atencion"),
+                        rs.getInt("id_cita"),
+                        rs.getString("fecha_hora_atencion"),
+                        rs.getString("sintomas"),
+                        rs.getString("diagnostico"),
+                        rs.getString("observaciones")
                 };
                 modelo.addRow(fila);
             }
@@ -161,7 +161,7 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
 
             ps.executeUpdate();
             JOptionPane.showMessageDialog(this, "Atención registrada correctamente.");
-            
+
             listarAtenciones();
             limpiar();
             estadoInicial();
@@ -207,8 +207,8 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         }
 
         int respuesta = JOptionPane.showConfirmDialog(
-            this, "¿Está seguro de eliminar esta atención?",
-            "Confirmación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
+                this, "¿Está seguro de eliminar esta atención?",
+                "Confirmación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
         );
 
         if (respuesta != JOptionPane.YES_OPTION) return;
@@ -232,29 +232,28 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        txtIdAtencion = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        cboCita = new javax.swing.JComboBox<>();
-        jLabel3 = new javax.swing.JLabel();
+        jLabel1 = Estilo.texto("", java.awt.Font.BOLD, 12, Estilo.TEXTO_SUAVE);
+        txtIdAtencion = Estilo.campoTexto();
+        jLabel2 = Estilo.texto("", java.awt.Font.BOLD, 12, Estilo.TEXTO_SUAVE);
+        cboCita = Estilo.combo(new String[0]);
+        jLabel3 = Estilo.texto("", java.awt.Font.BOLD, 12, Estilo.TEXTO_SUAVE);
         jScrollPane1 = new javax.swing.JScrollPane();
         txtSintomas = new javax.swing.JTextArea();
-        jLabel4 = new javax.swing.JLabel();
+        jLabel4 = Estilo.texto("", java.awt.Font.BOLD, 12, Estilo.TEXTO_SUAVE);
         jScrollPane2 = new javax.swing.JScrollPane();
         txtDiagnostico = new javax.swing.JTextArea();
-        jLabel5 = new javax.swing.JLabel();
+        jLabel5 = Estilo.texto("", java.awt.Font.BOLD, 12, Estilo.TEXTO_SUAVE);
         jScrollPane3 = new javax.swing.JScrollPane();
         txtObservaciones = new javax.swing.JTextArea();
         jPanel2 = new javax.swing.JPanel();
-        btnNuevo = new javax.swing.JButton();
-        btnGuardar = new javax.swing.JButton();
-        btnActualizar = new javax.swing.JButton();
-        btnEliminar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
+        btnNuevo = Estilo.botonSecundario("");
+        btnGuardar = Estilo.botonPrimario("");
+        btnActualizar = Estilo.botonPrimario("");
+        btnEliminar = Estilo.botonSecundario("");
+        btnCancelar = Estilo.botonSecundario("");
         jScrollPane4 = new javax.swing.JScrollPane();
         tblAtenciones = new javax.swing.JTable();
 
@@ -264,7 +263,26 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         setResizable(true);
         setTitle("Gestión de Atención Médica");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos de Atención"));
+        // --- DISEÑO (viene de Estilo): tarjeta blanca, campos de texto y botones ---
+        jPanel1.setBackground(java.awt.Color.WHITE);
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                javax.swing.BorderFactory.createLineBorder(Estilo.BORDE, 1), "Datos de Atención",
+                javax.swing.border.TitledBorder.LEADING, javax.swing.border.TitledBorder.TOP,
+                Estilo.fuente(java.awt.Font.BOLD, 13), Estilo.TEXTO));
+        txtIdAtencion.setBackground(Estilo.FONDO);   // solo lectura: se rellena al elegir un registro
+        for (javax.swing.JTextArea area : new javax.swing.JTextArea[]{txtSintomas, txtDiagnostico, txtObservaciones}) {
+            area.setFont(Estilo.fuente(java.awt.Font.PLAIN, 14));
+            area.setForeground(Estilo.TEXTO);
+            area.setCaretColor(Estilo.PRIMARIO);
+            area.setMargin(new java.awt.Insets(8, 12, 8, 12));
+            area.setLineWrap(true);
+            area.setWrapStyleWord(true);
+        }
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createLineBorder(Estilo.BORDE, 1));
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createLineBorder(Estilo.BORDE, 1));
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createLineBorder(Estilo.BORDE, 1));
+        jPanel2.setOpaque(false);
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 0));
 
         jLabel1.setText("ID Atención:");
 
@@ -291,55 +309,55 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtIdAtencion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboCita, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(20, Short.MAX_VALUE))
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel1)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(txtIdAtencion, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(30, 30, 30)
+                                                .addComponent(jLabel2)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(cboCita, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel3)
+                                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel4)
+                                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel5)
+                                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addContainerGap(20, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtIdAtencion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(cboCita, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(15, Short.MAX_VALUE))
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel1)
+                                        .addComponent(txtIdAtencion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel2)
+                                        .addComponent(cboCita, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel3)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel5))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        btnNuevo.setText("NUEVO");
+        btnNuevo.setText("Nuevo");
         btnNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNuevoActionPerformed(evt);
@@ -347,7 +365,7 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         });
         jPanel2.add(btnNuevo);
 
-        btnGuardar.setText("GUARDAR");
+        btnGuardar.setText("Guardar");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGuardarActionPerformed(evt);
@@ -355,7 +373,7 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         });
         jPanel2.add(btnGuardar);
 
-        btnActualizar.setText("ACTUALIZAR");
+        btnActualizar.setText("Actualizar");
         btnActualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnActualizarActionPerformed(evt);
@@ -363,7 +381,7 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         });
         jPanel2.add(btnActualizar);
 
-        btnEliminar.setText("ELIMINAR");
+        btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEliminarActionPerformed(evt);
@@ -371,7 +389,7 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         });
         jPanel2.add(btnEliminar);
 
-        btnCancelar.setText("CANCELAR");
+        btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
@@ -380,15 +398,15 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         jPanel2.add(btnCancelar);
 
         tblAtenciones.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
+                new Object [][] {
+                        {},
+                        {},
+                        {},
+                        {}
+                },
+                new String [] {
 
-            }
+                }
         ));
         tblAtenciones.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -396,58 +414,62 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
             }
         });
         jScrollPane4.setViewportView(tblAtenciones);
+        Estilo.tabla(tblAtenciones, jScrollPane4);   // diseño de la tabla (viene de Estilo)
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane4))
-                .addContainerGap(15, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane4))
+                                .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        pack();
-    }// </editor-fold>                        
+        Estilo.ventanaModulo(this, "Gestión de atención médica",
+                "Registra los síntomas, el diagnóstico y las observaciones de cada cita");
 
-    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        pack();
+    }
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {
         limpiar();
         estadoNuevo();
         txtSintomas.requestFocus();
-    }                                        
+    }
 
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {                                           
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
         guardarAtencion();
-    }                                          
+    }
 
-    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {                                              
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {
         actualizarAtencion();
-    }                                             
+    }
 
-    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {                                            
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {
         eliminarAtencion();
-    }                                           
+    }
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {                                            
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {
         limpiar();
         estadoInicial();
-    }                                           
+    }
 
-    private void tblAtencionesMouseClicked(java.awt.event.MouseEvent evt) {                                           
+    private void tblAtencionesMouseClicked(java.awt.event.MouseEvent evt) {
         int fila = tblAtenciones.getSelectedRow();
         if (fila >= 0) {
             txtIdAtencion.setText(tblAtenciones.getValueAt(fila, 0).toString());
@@ -456,7 +478,7 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
             txtObservaciones.setText(tblAtenciones.getValueAt(fila, 5).toString());
             estadoEdicion();
         }
-    }                                          
+    }
 
     private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnCancelar;
