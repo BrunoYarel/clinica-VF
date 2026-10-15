@@ -248,6 +248,18 @@ public class MenuPrincipal extends JFrame {
             abrirModuloEn(new FrmUsuarios());
             return;
         }
+        if (modulo.equals("Médicos")) {
+            abrirInternoEn("Gestión de Médicos", new com.mycompany.clinica.FrmMedico());
+            return;
+        }
+        if (modulo.equals("Especialidades")) {
+            abrirInternoEn("Registro de Especialidades", new com.mycompany.clinica.FrmEspecialidad());
+            return;
+        }
+        if (modulo.equals("Medicamentos")) {
+            abrirInternoEn("Gestión de Medicamentos", new FrmMedicamento());
+            return;
+        }
         // Módulo sin ventana todavía (Pacientes, Citas, Médicos, Especialidades, Medicamentos, Historial, Reportes...)
         JOptionPane.showMessageDialog(this, "El módulo de " + modulo + " estará disponible pronto.",
                 modulo, JOptionPane.INFORMATION_MESSAGE);
@@ -269,6 +281,28 @@ public class MenuPrincipal extends JFrame {
         });
         modulo.setVisible(true);
         setVisible(false);
+    }
+
+    /**
+     * Los módulos de Óscar (FrmMedico, FrmEspecialidad, FrmMedicamento) son JInternalFrame: necesitan
+     * un JDesktopPane. Se les crea una ventana contenedora y se abre con abrirModuloEn (oculta el menú
+     * y lo restaura al cerrar). Al cerrar el formulario interno también se cierra la ventana contenedora.
+     */
+    private void abrirInternoEn(String titulo, JInternalFrame interno) {
+        JFrame contenedor = new JFrame(titulo);
+        JDesktopPane escritorio = new JDesktopPane();
+        contenedor.setContentPane(escritorio);
+        contenedor.setSize(1100, 650);
+        contenedor.setLocationRelativeTo(null);
+        escritorio.add(interno);
+        interno.setVisible(true);
+        interno.addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+            @Override
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent e) {
+                contenedor.dispose();
+            }
+        });
+        abrirModuloEn(contenedor);
     }
 
     /** BOTÓN CAMBIAR CONTRASEÑA: abre el diálogo (modal, bloquea el menú hasta cerrarlo). */
