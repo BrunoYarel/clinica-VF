@@ -1,0 +1,454 @@
+package pe.senati.clinica.view.cita;
+
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
+import pe.senati.clinica.model.Cita;
+
+
+public class FrmCitas extends javax.swing.JFrame {
+    
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmCitas.class.getName());
+
+    /**
+     * Creates new form FrmCitas
+     */
+    public FrmCitas() {
+        initComponents();
+        
+        try {
+            java.awt.Color azulBorde = new java.awt.Color(120, 160, 220);
+            javax.swing.border.LineBorder bordeLinea = new javax.swing.border.LineBorder(azulBorde, 2);
+            javax.swing.border.TitledBorder tituloBorde = new javax.swing.border.TitledBorder(
+                bordeLinea, 
+                "REGISTRO DE CITAS MÉDICAS", 
+                javax.swing.border.TitledBorder.CENTER, 
+                javax.swing.border.TitledBorder.TOP, 
+                new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12), 
+                java.awt.Color.BLACK
+            );
+            this.jPanel1.setBorder(tituloBorde);
+            
+            java.awt.Color verdeTeal = new java.awt.Color(13, 148, 136);
+            jButton1.setBackground(verdeTeal);
+            jButton1.setForeground(java.awt.Color.WHITE);
+            jButton1.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+            jButton2.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+            jButton3.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+            
+            jLabel1.setVisible(false);
+            java.awt.Font fuenteLabel = new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12);
+            jLabel2.setFont(fuenteLabel);
+            jLabel3.setFont(fuenteLabel);
+            jLabel4.setFont(fuenteLabel);
+            jLabel5.setFont(fuenteLabel);
+            jLabel6.setFont(fuenteLabel);
+            
+            javax.swing.JLabel lbl1 = jLabel2, lbl2 = jLabel3, lbl3 = jLabel4, lbl4 = jLabel5, lbl5 = jLabel6;
+            javax.swing.JTextField txt1 = jTextField1, txt2 = jTextField2, txt3 = jTextField3, txt4 = jTextField4, txt5 = jTextField5;
+            
+            jPanel1.removeAll();
+            jPanel1.setLayout(new java.awt.GridBagLayout());
+            java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+            gbc.insets = new java.awt.Insets(6, 6, 6, 6);
+            gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            
+            gbc.gridx = 0; gbc.gridy = 0; jPanel1.add(lbl1, gbc);
+            gbc.gridx = 1; gbc.weightx = 1.0; jPanel1.add(txt1, gbc);
+            
+            gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.0; jPanel1.add(lbl2, gbc);
+            gbc.gridx = 1; gbc.weightx = 1.0; jPanel1.add(txt2, gbc);
+            
+            gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.0; jPanel1.add(lbl3, gbc);
+            gbc.gridx = 1; gbc.weightx = 1.0; jPanel1.add(txt3, gbc);
+            
+            gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.0; jPanel1.add(lbl4, gbc);
+            gbc.gridx = 1; gbc.weightx = 1.0; jPanel1.add(txt4, gbc);
+            
+            gbc.gridx = 0; gbc.gridy = 4; gbc.weightx = 0.0; jPanel1.add(lbl5, gbc);
+            gbc.gridx = 1; gbc.weightx = 1.0; jPanel1.add(txt5, gbc);
+            
+            javax.swing.JPanel panelBotones = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 8, 0));
+            panelBotones.add(jButton1);
+            panelBotones.add(jButton2);
+            panelBotones.add(jButton3);
+            
+            gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; gbc.weightx = 1.0;
+            jPanel1.add(panelBotones, gbc);
+            
+            txt1.setPreferredSize(new java.awt.Dimension(250, 26));
+            txt2.setPreferredSize(new java.awt.Dimension(250, 26));
+            txt3.setPreferredSize(new java.awt.Dimension(250, 26));
+            txt4.setPreferredSize(new java.awt.Dimension(250, 26));
+            txt5.setPreferredSize(new java.awt.Dimension(250, 26));
+            
+        } catch (Exception e) {
+            System.err.println("Aviso de diseño: " + e.getMessage());
+        }
+        
+        this.setSize(950, 650);
+        this.setLocationRelativeTo(null);
+        
+        limpiarCampos();
+        listarCitasEnTabla();
+        
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    }
+    
+    public FrmCitas(javax.swing.JFrame menu) {
+        this(); 
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override 
+            public void windowClosed(java.awt.event.WindowEvent e) { 
+                menu.setVisible(true); 
+            }
+        });
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jTextField4 = new javax.swing.JTextField();
+        jTextField5 = new javax.swing.JTextField();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 617;
+        gridBagConstraints.ipady = 255;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(18, 6, 6, 6);
+        getContentPane().add(jScrollPane1, gridBagConstraints);
+
+        jLabel5.setText("Hora (HH:MM):");
+
+        jLabel1.setText("FORMULARIO DE CITAS");
+
+        jButton1.setText("Guardar Cita");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+
+        jLabel3.setText("ID Médico:");
+
+        jLabel2.setText("ID Paciente:");
+
+        jLabel4.setText("Fecha (AAAA-MM-DD):");
+
+        jLabel6.setText("Motivo de la Cita:");
+
+        jButton2.setText("Confirmar Cita");
+        jButton2.addActionListener(this::jButton2ActionPerformed);
+
+        jButton3.setText("Cancelar Cita");
+        jButton3.addActionListener(this::jButton3ActionPerformed);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(104, 104, 104)
+                        .addComponent(jLabel1)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = -6;
+        gridBagConstraints.insets = new java.awt.Insets(12, 158, 0, 0);
+        getContentPane().add(jPanel1, gridBagConstraints);
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            // 1. Validar que no haya campos vacíos en la interfaz
+            if (jTextField1.getText().trim().isEmpty() || jTextField2.getText().trim().isEmpty() ||
+                jTextField3.getText().trim().isEmpty() || jTextField4.getText().trim().isEmpty()) {
+                
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                    "Por favor, complete todos los campos obligatorios.", 
+                    "Campos Vacíos", javax.swing.JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // 2. Mapear los datos de la interfaz al modelo Cita
+            pe.senati.clinica.model.Cita cita = new pe.senati.clinica.model.Cita();
+            cita.setIdPaciente(Integer.parseInt(jTextField1.getText().trim()));
+            cita.setIdMedico(Integer.parseInt(jTextField2.getText().trim()));
+            cita.setFechaCita(jTextField3.getText().trim());
+            cita.setHoraCita(jTextField4.getText().trim());
+            cita.setMotivo(jTextField5.getText().trim());
+
+            // 3. Llamar al servicio para procesar el registro
+            pe.senati.clinica.service.CitaService service = new pe.senati.clinica.service.CitaService();
+            boolean exito = service.agendarNuevaCita(cita);
+
+            // 4. Mostrar respuesta según el resultado
+            if (exito) {
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                    "¡Cita registrada con éxito en el sistema!", 
+                    "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                limpiarCampos();
+                listarCitasEnTabla();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                    "No se pudo registrar la cita. Verifique la consola o el formato de los datos.", 
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Los identificadores de Paciente y Médico deben ser valores numéricos enteros.", 
+                "Error de Formato", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }                                        
+    
+     // Este método se encarga de vaciar los campos después de guardar con éxito
+    private void limpiarCampos() {
+        jTextField1.setText("");
+        jTextField2.setText("");
+        jTextField3.setText("");
+        jTextField4.setText("");
+        jTextField5.setText("");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        int filaSeleccionada = jTable1.getSelectedRow();
+        if (filaSeleccionada == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, seleccione una cita de la tabla.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int idCita = (int) jTable1.getValueAt(filaSeleccionada, 0);
+
+        pe.senati.clinica.service.CitaService service = new pe.senati.clinica.service.CitaService();
+        if (service.actualizarEstado(idCita, "Programada")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Cita confirmada con éxito.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            listarCitasEnTabla(); 
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo confirmar la cita.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        int filaSeleccionada = jTable1.getSelectedRow();
+        if (filaSeleccionada == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, seleccione una cita de la tabla.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int idCita = (int) jTable1.getValueAt(filaSeleccionada, 0);
+
+        pe.senati.clinica.service.CitaService service = new pe.senati.clinica.service.CitaService();
+        if (service.actualizarEstado(idCita, "Cancelada")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Cita cancelada con éxito.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            listarCitasEnTabla();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo cancelar la cita.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+    
+    public void listarCitasEnTabla() {
+        String[] columnas = {"ID", "Fecha", "Hora", "Motivo", "Estado", "ID Paciente", "ID Médico"};
+        DefaultTableModel modelo = new DefaultTableModel(null, columnas);
+        
+        try {
+            pe.senati.clinica.service.CitaService service = new pe.senati.clinica.service.CitaService();
+            List<Cita> lista = service.obtenerTodasLasCitas();
+            
+            Object[] fila = new Object[7];
+            for (Cita cita : lista) {
+                fila[0] = cita.getIdCita();
+                fila[1] = cita.getFechaCita();
+                fila[2] = cita.getHoraCita();
+                fila[3] = cita.getMotivo();
+                fila[4] = cita.getEstado();
+                fila[5] = cita.getIdPaciente();
+                fila[6] = cita.getIdMedico();
+                modelo.addRow(fila);
+            }
+            
+            jTable1.setModel(modelo);
+            jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+            
+            jTable1.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
+            jTable1.setForeground(new java.awt.Color(51, 65, 85)); // Color slate oscuro
+            jTable1.setRowHeight(32); // Da una altura espaciosa y elegante a las filas
+            jTable1.setShowVerticalLines(false); // Estilo web moderno: sin líneas verticales
+            jTable1.setGridColor(new java.awt.Color(226, 232, 240)); // Líneas horizontales gris muy claro
+            
+            // 2. Personalizar el Encabezado (Mismo azul oscuro/slate que usa el grupo)
+            javax.swing.table.JTableHeader encabezado = jTable1.getTableHeader();
+            encabezado.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+            encabezado.setBackground(new java.awt.Color(15, 23, 42)); // Color oscuro corporativo
+            encabezado.setForeground(java.awt.Color.WHITE); // Texto del título en blanco
+            encabezado.setPreferredSize(new java.awt.Dimension(0, 36)); // Encabezado más alto y estilizado
+            
+            // 3. Hacer la tabla responsiva (Se estira sola al cambiar el tamaño de la ventana)
+            jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+            
+            // 4. Suavizar los bordes del scroll del componente contenedor
+            if (jTable1.getParent() instanceof javax.swing.JViewport) {
+                javax.swing.JScrollPane scroll = (javax.swing.JScrollPane) jTable1.getParent().getParent();
+                scroll.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(226, 232, 240), 1));
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error al cargar la tabla de citas: " + e.getMessage());
+        }
+    }
+
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> new FrmCitas().setVisible(true));
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
+    // End of variables declaration//GEN-END:variables
+}

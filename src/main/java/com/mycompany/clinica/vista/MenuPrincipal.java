@@ -210,130 +210,143 @@ public class MenuPrincipal extends JFrame {
         textos.add(Estilo.texto(titulo, Font.BOLD, 17, Estilo.TEXTO));
         textos.add(Estilo.texto(descripcion, Font.PLAIN, 12, Estilo.TEXTO_SUAVE));
         tarjeta.add(filaIcono, BorderLayout.NORTH);
-    tarjeta.add(textos, BorderLayout.CENTER);
-    tarjeta.addMouseListener(new MouseAdapter() {
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    abrirModulo(titulo);
+        tarjeta.add(textos, BorderLayout.CENTER);
+        tarjeta.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                abrirModulo(titulo);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                tarjeta.setBackground(new Color(240, 253, 250));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                tarjeta.setBackground(Color.WHITE);
+            }
+        });
+        return tarjeta;
     }
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    tarjeta.setBackground(new Color(240, 253, 250));
-    }
-    @Override
-    public void mouseExited(MouseEvent e) {
-    tarjeta.setBackground(Color.WHITE);
-    }
-    });
-    return tarjeta;
-    }
+
     // =====================================================================
     //  ACCIONES DE LOS BOTONES
     // =====================================================================
-    /** CLIC EN UNA TARJETA: Conecta cada módulo con su respectiva ventana. */
+
+    /** CLIC EN UNA TARJETA: conecta cada módulo con su respectiva ventana. */
     private void abrirModulo(String modulo) {
-    Permisos.Pantalla pantalla = Permisos.Pantalla.deTitulo(modulo);
-    if (pantalla != null && !Permisos.puedeVer(pantalla)) {
-    JOptionPane.showMessageDialog(this, "No tiene permiso para acceder a este módulo.",
-    modulo, JOptionPane.WARNING_MESSAGE);
-    return;
-    }
-    // INTEGRACIÓN DE TUS MÓDULOS (Pacientes e Historial Clínico)
-    if (modulo.equals("Pacientes") || "Pacientes".equalsIgnoreCase(modulo)) {
-    abrirPanelComoVentana("Gestión de Pacientes", new FrmPacientes());
-    return;
-    }
-    if (modulo.equals("Historial") || "Historial".equalsIgnoreCase(modulo)) {
-    abrirPanelComoVentana("Historial Clínico de Pacientes", new FrmHistorial());
-    return;
-    }
-    if (modulo.equals("Usuarios")) {
-    abrirModuloEn(new FrmUsuarios());
-    return;
-    }
-    if (modulo.equals("Médicos")) {
-    abrirInternoEn("Gestión de Médicos", new com.mycompany.clinica.FrmMedico());
-    return;
-    }
-    if (modulo.equals("Especialidades")) {
-    abrirInternoEn("Registro de Especialidades", new com.mycompany.clinica.FrmEspecialidad());
-    return;
-    }
-    if (modulo.equals("Medicamentos")) {
-    abrirInternoEn("Gestión de Medicamentos", new FrmMedicamento());
-    return;
-    }
-    if (modulo.equals("Atención")) {
-    abrirInternoEn("Gestión de Atención Médica", new FrmAtencion());
-    return;
-    }
-    if (modulo.equals("Recetas")) {
-    abrirInternoEn("Gestión de Recetas Médicas", new FrmReceta());
-    return;
-    }
-    JOptionPane.showMessageDialog(this, "El módulo de " + modulo + " estará disponible pronto.",
-    modulo, JOptionPane.INFORMATION_MESSAGE);
-    }
-    private void abrirModuloEn(JFrame modulo) {
-    modulo.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    modulo.addWindowListener(new WindowAdapter() {
-    @Override
-    public void windowClosed(WindowEvent e) {
-    MenuPrincipal.this.setVisible(true);
-    }
-    });
-    modulo.setVisible(true);
-    setVisible(false);
-    }
-    private void abrirInternoEn(String titulo, JInternalFrame interno) {
-    JFrame contenedor = new JFrame(titulo);
-    JDesktopPane escritorio = new JDesktopPane();
-    escritorio.setBackground(Estilo.FONDO);
-    contenedor.setContentPane(escritorio);
-    contenedor.setSize(1100, 650);
-    contenedor.setLocationRelativeTo(null);
-    escritorio.add(interno);
-    interno.setVisible(true);
-    interno.addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
-    @Override
-    public void internalFrameClosed(javax.swing.event.InternalFrameEvent e) {
-    contenedor.dispose();
-    }
-    });
-    abrirModuloEn(contenedor);
-    }
-    /**
-    * CORRECCIÓN DE ENVOLTURA:
-    * Carga un JPanel personalizado dentro de un contenedor JFrame flotante para
-    * no alterar el diseño asíncrono implementado por tus compañeros.
-    */
-    private void abrirPanelComoVentana(String titulo, JPanel panelModificado) {
-    JFrame contenedor = new JFrame(titulo);
-    contenedor.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    contenedor.setLayout(new BorderLayout());
-    contenedor.setContentPane(panelModificado);
-    contenedor.setSize(1150, 680);
-    contenedor.setLocationRelativeTo(null);
-    contenedor.addWindowListener(new WindowAdapter() {
-    @Override
-    public void windowClosed(WindowEvent e) {
-    MenuPrincipal.this.setVisible(true);
-    }
-    });
-    contenedor.setVisible(true);
-    setVisible(false);
-    }
-    private void abrirCambiarPassword() {
-    new CambiarPassword(this).setVisible(true);
-    }
-    private void abrirNuevoUsuario() {
-    new NuevoUsuario().setVisible(true);
-    dispose();
-    }
-    private void cerrarSesion() {
-    Sesion.cerrar();
-    new Login().setVisible(true);
-    dispose();
-    }
+        Permisos.Pantalla pantalla = Permisos.Pantalla.deTitulo(modulo);
+        if (pantalla != null && !Permisos.puedeVer(pantalla)) {
+            JOptionPane.showMessageDialog(this, "No tiene permiso para acceder a este módulo.",
+                    modulo, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (modulo.equalsIgnoreCase("Pacientes")) {
+            abrirPanelComoVentana("Gestión de Pacientes", new FrmPacientes());
+            return;
+        }
+        if (modulo.equalsIgnoreCase("Historial")) {
+            abrirPanelComoVentana("Historial Clínico de Pacientes", new FrmHistorial());
+            return;
+        }
+        if (modulo.equals("Usuarios")) {
+            abrirModuloEn(new FrmUsuarios());
+            return;
+        }
+        if (modulo.equals("Citas")) {
+            this.setVisible(false);
+            new pe.senati.clinica.view.cita.FrmCitas(this).setVisible(true);
+            return;
+        }
+        if (modulo.equals("Médicos")) {
+            abrirInternoEn("Gestión de Médicos", new com.mycompany.clinica.FrmMedico());
+            return;
+        }
+        if (modulo.equals("Especialidades")) {
+            abrirInternoEn("Registro de Especialidades", new com.mycompany.clinica.FrmEspecialidad());
+            return;
+        }
+        if (modulo.equals("Medicamentos")) {
+            abrirInternoEn("Gestión de Medicamentos", new FrmMedicamento());
+            return;
+        }
+        if (modulo.equals("Atención")) {
+            abrirInternoEn("Gestión de Atención Médica", new FrmAtencion());
+            return;
+        }
+        if (modulo.equals("Recetas")) {
+            abrirInternoEn("Gestión de Recetas Médicas", new FrmReceta());
+            return;
+        }
+        // Módulo sin ventana todavía (Reportes...)
+        JOptionPane.showMessageDialog(this, "El módulo de " + modulo + " estará disponible pronto.",
+                modulo, JOptionPane.INFORMATION_MESSAGE);
     }
 
+    private void abrirModuloEn(JFrame modulo) {
+        modulo.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        modulo.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                MenuPrincipal.this.setVisible(true);
+            }
+        });
+        modulo.setVisible(true);
+        setVisible(false);
+    }
+
+    private void abrirInternoEn(String titulo, JInternalFrame interno) {
+        JFrame contenedor = new JFrame(titulo);
+        JDesktopPane escritorio = new JDesktopPane();
+        escritorio.setBackground(Estilo.FONDO);
+        contenedor.setContentPane(escritorio);
+        contenedor.setSize(1100, 650);
+        contenedor.setLocationRelativeTo(null);
+        escritorio.add(interno);
+        interno.setVisible(true);
+        interno.addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+            @Override
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent e) {
+                contenedor.dispose();
+            }
+        });
+        abrirModuloEn(contenedor);
+    }
+
+    /**
+     * Carga un JPanel dentro de un JFrame flotante para no alterar el diseño
+     * implementado por los demás compañeros.
+     */
+    private void abrirPanelComoVentana(String titulo, JPanel panelModificado) {
+        JFrame contenedor = new JFrame(titulo);
+        contenedor.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        contenedor.setLayout(new BorderLayout());
+        contenedor.setContentPane(panelModificado);
+        contenedor.setSize(1150, 680);
+        contenedor.setLocationRelativeTo(null);
+        contenedor.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                MenuPrincipal.this.setVisible(true);
+            }
+        });
+        contenedor.setVisible(true);
+        setVisible(false);
+    }
+
+    private void abrirCambiarPassword() {
+        new CambiarPassword(this).setVisible(true);
+    }
+
+    private void abrirNuevoUsuario() {
+        new NuevoUsuario().setVisible(true);
+        dispose();
+    }
+
+    private void cerrarSesion() {
+        Sesion.cerrar();
+        new Login().setVisible(true);
+        dispose();
+    }
+}
