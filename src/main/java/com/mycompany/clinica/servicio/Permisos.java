@@ -22,7 +22,9 @@ public final class Permisos {
         HISTORIAL("Historial"),
         REPORTES("Reportes"),
         USUARIOS("Usuarios"),
-        MI_AGENDA("Mi agenda");
+        MI_AGENDA("Mi agenda"),
+        ATENCION("Atención"),
+        RECETAS("Recetas");
 
         private final String titulo;
 
@@ -70,7 +72,7 @@ public final class Permisos {
             return List.of(Pantalla.PACIENTES, Pantalla.CITAS, Pantalla.MEDICOS);
         }
         if (Sesion.esMedico()) {
-            return List.of(Pantalla.MI_AGENDA, Pantalla.HISTORIAL);
+            return List.of(Pantalla.MI_AGENDA, Pantalla.ATENCION, Pantalla.RECETAS, Pantalla.HISTORIAL);
         }
         return List.of();
     }

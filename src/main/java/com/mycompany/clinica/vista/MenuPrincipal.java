@@ -61,8 +61,14 @@ public class MenuPrincipal extends JFrame {
 
         JPanel opciones = new JPanel(new GridLayout(0, 1, 0, 6));
         opciones.setOpaque(false);
-        if (Permisos.puedeVer(Permisos.Pantalla.MI_AGENDA)) {    // el médico no tiene tarjetas: su otro módulo va aquí
+        if (Permisos.puedeVer(Permisos.Pantalla.MI_AGENDA)) {    // los módulos del médico (Atención, Recetas, Historial) van aquí
             opciones.add(Estilo.texto("  MÓDULOS", Font.BOLD, 11, new Color(100, 116, 139)));
+            JButton btnAtencion = Estilo.botonMenu("Atención médica");
+            btnAtencion.addActionListener(e -> abrirModulo("Atención"));
+            opciones.add(btnAtencion);
+            JButton btnRecetas = Estilo.botonMenu("Recetas médicas");
+            btnRecetas.addActionListener(e -> abrirModulo("Recetas"));
+            opciones.add(btnRecetas);
             JButton btnHistorial = Estilo.botonMenu("Historial clínico");
             btnHistorial.addActionListener(e -> abrirModulo("Historial"));
             opciones.add(btnHistorial);
@@ -167,6 +173,12 @@ public class MenuPrincipal extends JFrame {
                 case MI_AGENDA:
                     tarjetas.add(crearTarjeta(titulo, "Tus citas y atenciones", "A", new Color(124, 58, 237)));
                     break;
+                case ATENCION:
+                    tarjetas.add(crearTarjeta(titulo, "Atención de pacientes", "At", new Color(225, 29, 72)));
+                    break;
+                case RECETAS:
+                    tarjetas.add(crearTarjeta(titulo, "Recetas de las atenciones", "Re", new Color(234, 88, 12)));
+                    break;
                 default:
                     break;   // INICIO es este mismo menú: no lleva tarjeta
             }
@@ -260,6 +272,14 @@ public class MenuPrincipal extends JFrame {
             abrirInternoEn("Gestión de Medicamentos", new FrmMedicamento());
             return;
         }
+        if (modulo.equals("Atención")) {
+            abrirInternoEn("Gestión de Atención Médica", new FrmAtencion());
+            return;
+        }
+        if (modulo.equals("Recetas")) {
+            abrirInternoEn("Gestión de Recetas Médicas", new FrmReceta());
+            return;
+        }
         // Módulo sin ventana todavía (Pacientes, Citas, Médicos, Especialidades, Medicamentos, Historial, Reportes...)
         JOptionPane.showMessageDialog(this, "El módulo de " + modulo + " estará disponible pronto.",
                 modulo, JOptionPane.INFORMATION_MESSAGE);
@@ -284,9 +304,10 @@ public class MenuPrincipal extends JFrame {
     }
 
     /**
-     * Los módulos de Óscar (FrmMedico, FrmEspecialidad, FrmMedicamento) son JInternalFrame: necesitan
-     * un JDesktopPane. Se les crea una ventana contenedora y se abre con abrirModuloEn (oculta el menú
-     * y lo restaura al cerrar). Al cerrar el formulario interno también se cierra la ventana contenedora.
+     * Los módulos de Óscar (FrmMedico, FrmEspecialidad, FrmMedicamento) y de Yimmi (FrmAtencion, FrmReceta)
+     * son JInternalFrame: necesitan un JDesktopPane. Se les crea una ventana contenedora y se abre con
+     * abrirModuloEn (oculta el menú y lo restaura al cerrar). Al cerrar el formulario interno también
+     * se cierra la ventana contenedora.
      */
     private void abrirInternoEn(String titulo, JInternalFrame interno) {
         JFrame contenedor = new JFrame(titulo);
