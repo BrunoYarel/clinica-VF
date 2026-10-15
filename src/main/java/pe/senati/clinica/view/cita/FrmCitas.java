@@ -15,11 +15,93 @@ public class FrmCitas extends javax.swing.JFrame {
     public FrmCitas() {
         initComponents();
         
-        //this.setSize(800, 600);
-        //this.setLocationRelativeTo(null);
+        try {
+            java.awt.Color azulBorde = new java.awt.Color(120, 160, 220);
+            javax.swing.border.LineBorder bordeLinea = new javax.swing.border.LineBorder(azulBorde, 2);
+            javax.swing.border.TitledBorder tituloBorde = new javax.swing.border.TitledBorder(
+                bordeLinea, 
+                "REGISTRO DE CITAS MÉDICAS", 
+                javax.swing.border.TitledBorder.CENTER, 
+                javax.swing.border.TitledBorder.TOP, 
+                new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12), 
+                java.awt.Color.BLACK
+            );
+            this.jPanel1.setBorder(tituloBorde);
+            
+            java.awt.Color verdeTeal = new java.awt.Color(13, 148, 136);
+            jButton1.setBackground(verdeTeal);
+            jButton1.setForeground(java.awt.Color.WHITE);
+            jButton1.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+            jButton2.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+            jButton3.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+            
+            jLabel1.setVisible(false);
+            java.awt.Font fuenteLabel = new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12);
+            jLabel2.setFont(fuenteLabel);
+            jLabel3.setFont(fuenteLabel);
+            jLabel4.setFont(fuenteLabel);
+            jLabel5.setFont(fuenteLabel);
+            jLabel6.setFont(fuenteLabel);
+            
+            javax.swing.JLabel lbl1 = jLabel2, lbl2 = jLabel3, lbl3 = jLabel4, lbl4 = jLabel5, lbl5 = jLabel6;
+            javax.swing.JTextField txt1 = jTextField1, txt2 = jTextField2, txt3 = jTextField3, txt4 = jTextField4, txt5 = jTextField5;
+            
+            jPanel1.removeAll();
+            jPanel1.setLayout(new java.awt.GridBagLayout());
+            java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+            gbc.insets = new java.awt.Insets(6, 6, 6, 6);
+            gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            
+            gbc.gridx = 0; gbc.gridy = 0; jPanel1.add(lbl1, gbc);
+            gbc.gridx = 1; gbc.weightx = 1.0; jPanel1.add(txt1, gbc);
+            
+            gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.0; jPanel1.add(lbl2, gbc);
+            gbc.gridx = 1; gbc.weightx = 1.0; jPanel1.add(txt2, gbc);
+            
+            gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.0; jPanel1.add(lbl3, gbc);
+            gbc.gridx = 1; gbc.weightx = 1.0; jPanel1.add(txt3, gbc);
+            
+            gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.0; jPanel1.add(lbl4, gbc);
+            gbc.gridx = 1; gbc.weightx = 1.0; jPanel1.add(txt4, gbc);
+            
+            gbc.gridx = 0; gbc.gridy = 4; gbc.weightx = 0.0; jPanel1.add(lbl5, gbc);
+            gbc.gridx = 1; gbc.weightx = 1.0; jPanel1.add(txt5, gbc);
+            
+            javax.swing.JPanel panelBotones = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 8, 0));
+            panelBotones.add(jButton1);
+            panelBotones.add(jButton2);
+            panelBotones.add(jButton3);
+            
+            gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; gbc.weightx = 1.0;
+            jPanel1.add(panelBotones, gbc);
+            
+            txt1.setPreferredSize(new java.awt.Dimension(250, 26));
+            txt2.setPreferredSize(new java.awt.Dimension(250, 26));
+            txt3.setPreferredSize(new java.awt.Dimension(250, 26));
+            txt4.setPreferredSize(new java.awt.Dimension(250, 26));
+            txt5.setPreferredSize(new java.awt.Dimension(250, 26));
+            
+        } catch (Exception e) {
+            System.err.println("Aviso de diseño: " + e.getMessage());
+        }
+        
+        this.setSize(950, 650);
+        this.setLocationRelativeTo(null);
         
         limpiarCampos();
         listarCitasEnTabla();
+        
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    }
+    
+    public FrmCitas(javax.swing.JFrame menu) {
+        this(); 
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override 
+            public void windowClosed(java.awt.event.WindowEvent e) { 
+                menu.setVisible(true); 
+            }
+        });
     }
 
     /**

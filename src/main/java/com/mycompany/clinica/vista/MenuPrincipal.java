@@ -260,6 +260,11 @@ public class MenuPrincipal extends JFrame {
             abrirModuloEn(new FrmUsuarios());
             return;
         }
+        if (modulo.equals("Citas")) {
+            this.setVisible(false);
+            new pe.senati.clinica.view.cita.FrmCitas(this).setVisible(true);
+            return;
+        }
         if (modulo.equals("Médicos")) {
             abrirInternoEn("Gestión de Médicos", new com.mycompany.clinica.FrmMedico());
             return;
