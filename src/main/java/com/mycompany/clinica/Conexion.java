@@ -15,6 +15,10 @@ import java.util.logging.Logger;
  *
  * Si no logra conectarse lanza una SQLException con un mensaje claro. Así ningún módulo
  * recibe una conexión nula ni necesita comprobarlo: solo captura SQLException.
+ *
+ * Idea de diseño: no se guarda una conexión compartida. Cada operación abre la suya y la cierra al
+ * terminar (try-with-resources), así los módulos no dependen unos de otros ni comparten estado en memoria.
+ * Lo único que comparten es la base de datos, que es la fuente de verdad del sistema.
  */
 public final class Conexion {
 

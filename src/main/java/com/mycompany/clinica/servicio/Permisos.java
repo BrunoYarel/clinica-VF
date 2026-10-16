@@ -24,7 +24,8 @@ public final class Permisos {
         USUARIOS("Usuarios"),
         MI_AGENDA("Mi agenda"),
         ATENCION("Atención"),
-        RECETAS("Recetas");
+        RECETAS("Recetas"),
+        CONFIGURACION("Configuración");
 
         private final String titulo;
 
@@ -66,7 +67,8 @@ public final class Permisos {
     public static List<Pantalla> pantallasDelRol() {
         if (Sesion.esAdmin()) {
             return List.of(Pantalla.PACIENTES, Pantalla.CITAS, Pantalla.MEDICOS, Pantalla.ESPECIALIDADES,
-                    Pantalla.MEDICAMENTOS, Pantalla.HISTORIAL, Pantalla.REPORTES, Pantalla.USUARIOS);
+                    Pantalla.MEDICAMENTOS, Pantalla.HISTORIAL, Pantalla.REPORTES, Pantalla.USUARIOS,
+                    Pantalla.CONFIGURACION);
         }
         if (Sesion.esRecepcionista()) {
             return List.of(Pantalla.PACIENTES, Pantalla.CITAS, Pantalla.MEDICOS);

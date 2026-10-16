@@ -1,4 +1,4 @@
-package com.mycompany.clinica;
+package com.mycompany.clinica.vista;
 
 public class Especialidad {
     private int id_especialidad;

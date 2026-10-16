@@ -22,7 +22,7 @@ public class Login extends JFrame {
     private JButton btnEntrar;
 
     public Login() {
-        super("Clínica - Inicio de sesión");
+        super("Clínica Valmont - Inicio de sesión");
         initComponents();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -41,7 +41,7 @@ public class Login extends JFrame {
         filaLogo.setOpaque(false);
         filaLogo.add(Estilo.logo(84, Color.WHITE, Estilo.PRIMARIO_OSCURO));
 
-        JLabel lblNombre = Estilo.texto("Clínica", Font.BOLD, 34, Color.WHITE);
+        JLabel lblNombre = Estilo.texto("Clínica Valmont", Font.BOLD, 30, Color.WHITE);
         lblNombre.setHorizontalAlignment(SwingConstants.CENTER);
 
         JLabel lblLema = Estilo.texto("<html><center>Gestión de pacientes,<br>citas y atenciones médicas</center></html>",

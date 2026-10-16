@@ -1,6 +1,7 @@
 package com.mycompany.clinica.vista;
 
 import com.mycompany.clinica.Conexion;
+import com.mycompany.clinica.servicio.Sesion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +12,11 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * Módulo de Atención (rol Médico). Se comunica con el resto del sistema solo a través de la base de datos
+ * y de Sesion: lee las citas del médico en sesión y registra la atención, que después consumen Recetas,
+ * Historial, Mi agenda y Reportes sin llamarse entre ellos.
+ */
 public class FrmAtencion extends javax.swing.JInternalFrame {
 
     private Map<String, Integer> citasMap = new HashMap<>();
@@ -73,19 +79,22 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
     private void cargarCitasPendientes() {
         cboCita.removeAllItems();
         citasMap.clear();
+        // Restricción por rol: el médico solo puede atender SUS citas (id_medico de la sesión)
         String sql = "SELECT c.id_cita, CONCAT('Cita #', c.id_cita, ' - Paciente: ', p.nombres, ' ', p.apellidos) AS descripcion " +
                 "FROM cita c INNER JOIN paciente p ON c.id_paciente = p.id_paciente " +
-                "WHERE c.estado IN ('Pendiente', 'Programada', 'En Espera')";
+                "WHERE c.estado IN ('Pendiente', 'Programada', 'En Espera') " +
+                "AND c.id_medico = ?";
 
         try (Connection cn = Conexion.conectar();
-             PreparedStatement ps = cn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                int idCita = rs.getInt("id_cita");
-                String desc = rs.getString("descripcion");
-                cboCita.addItem(desc);
-                citasMap.put(desc, idCita);
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, Sesion.getIdMedico());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int idCita = rs.getInt("id_cita");
+                    String desc = rs.getString("descripcion");
+                    cboCita.addItem(desc);
+                    citasMap.put(desc, idCita);
+                }
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al cargar citas: " + e.getMessage());
@@ -102,23 +111,26 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
             }
         };
 
-        String sql = "SELECT id_atencion, id_cita, fecha_hora_atencion, sintomas, diagnostico, observaciones " +
-                "FROM atencion ORDER BY id_atencion DESC";
+        // Restricción por rol: solo las atenciones de las citas del médico en sesión
+        String sql = "SELECT a.id_atencion, a.id_cita, a.fecha_hora_atencion, a.sintomas, a.diagnostico, a.observaciones " +
+                "FROM atencion a INNER JOIN cita c ON a.id_cita = c.id_cita " +
+                "WHERE c.id_medico = ? ORDER BY a.id_atencion DESC";
 
         try (Connection cn = Conexion.conectar();
-             PreparedStatement ps = cn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                Object[] fila = {
-                        rs.getInt("id_atencion"),
-                        rs.getInt("id_cita"),
-                        rs.getString("fecha_hora_atencion"),
-                        rs.getString("sintomas"),
-                        rs.getString("diagnostico"),
-                        rs.getString("observaciones")
-                };
-                modelo.addRow(fila);
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, Sesion.getIdMedico());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Object[] fila = {
+                            rs.getInt("id_atencion"),
+                            rs.getInt("id_cita"),
+                            rs.getString("fecha_hora_atencion"),
+                            rs.getString("sintomas"),
+                            rs.getString("diagnostico"),
+                            rs.getString("observaciones")
+                    };
+                    modelo.addRow(fila);
+                }
             }
             tblAtenciones.setModel(modelo);
 
@@ -128,7 +140,9 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
     }
 
     private boolean validarCampos() {
-        if (cboCita.getSelectedItem() == null) {
+        // [FIX integracion] Al editar una atencion ya guardada no hace falta elegir cita (la cita ya salio del combo
+        // porque esta Atendida); antes, sin citas pendientes, Actualizar quedaba bloqueado.
+        if (txtIdAtencion.getText().isEmpty() && cboCita.getSelectedItem() == null) {
             JOptionPane.showMessageDialog(this, "Seleccione una cita médica.");
             return false;
         }
@@ -150,19 +164,36 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
 
         int idCita = citasMap.get(cboCita.getSelectedItem().toString());
         String sql = "INSERT INTO atencion (id_cita, sintomas, diagnostico, observaciones) VALUES (?, ?, ?, ?)";
+        // [FIX integración] Antes la cita seguía "Programada" tras atenderla: Citas la mostraba como pendiente,
+        // se podía cancelar y esta misma lista la volvía a ofrecer (y al repetirla fallaba por uq_atencion_cita).
+        // Ahora la atención y el cambio de estado a 'Atendida' se guardan juntos (transacción).
+        String sqlEstado = "UPDATE cita SET estado = 'Atendida' WHERE id_cita = ?";
 
-        try (Connection cn = Conexion.conectar();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+        // Sincronización entre módulos: la atención y el cambio de estado de la cita se guardan en una sola
+        // transacción. Citas, Agenda, Historial y Reportes leen ese estado de la base de datos, así que no
+        // puede quedar una atención sin su cita marcada como Atendida (ni al revés).
+        try (Connection cn = Conexion.conectar()) {
+            cn.setAutoCommit(false);
+            try (PreparedStatement ps = cn.prepareStatement(sql);
+                 PreparedStatement psEstado = cn.prepareStatement(sqlEstado)) {
 
-            ps.setInt(1, idCita);
-            ps.setString(2, txtSintomas.getText().trim());
-            ps.setString(3, txtDiagnostico.getText().trim());
-            ps.setString(4, txtObservaciones.getText().trim());
+                ps.setInt(1, idCita);
+                ps.setString(2, txtSintomas.getText().trim());
+                ps.setString(3, txtDiagnostico.getText().trim());
+                ps.setString(4, txtObservaciones.getText().trim());
+                ps.executeUpdate();
 
-            ps.executeUpdate();
+                psEstado.setInt(1, idCita);
+                psEstado.executeUpdate();
+                cn.commit();
+            } catch (SQLException e) {
+                cn.rollback();   // si falla una de las dos, no queda ninguna
+                throw e;
+            }
             JOptionPane.showMessageDialog(this, "Atención registrada correctamente.");
 
             listarAtenciones();
+            cargarCitasPendientes();   // [FIX] la cita ya atendida sale del combo
             limpiar();
             estadoInicial();
 
@@ -214,18 +245,38 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
         if (respuesta != JOptionPane.YES_OPTION) return;
 
         String sql = "DELETE FROM atencion WHERE id_atencion = ?";
+        // [FIX integración] Al borrar la atención la cita vuelve a 'Programada' para poder atenderse de nuevo
+        // (si no, quedaría 'Atendida' sin atención). Se hace ANTES del DELETE porque usa la atención para
+        // saber de qué cita se trata; todo en una transacción.
+        String sqlEstado = "UPDATE cita SET estado = 'Programada' "
+                + "WHERE id_cita = (SELECT id_cita FROM atencion WHERE id_atencion = ?)";
 
-        try (Connection cn = Conexion.conectar();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+        try (Connection cn = Conexion.conectar()) {
+            cn.setAutoCommit(false);
+            int idAtencion = Integer.parseInt(txtIdAtencion.getText());
+            try (PreparedStatement psEstado = cn.prepareStatement(sqlEstado);
+                 PreparedStatement ps = cn.prepareStatement(sql)) {
 
-            ps.setInt(1, Integer.parseInt(txtIdAtencion.getText()));
-            ps.executeUpdate();
+                psEstado.setInt(1, idAtencion);
+                psEstado.executeUpdate();
+                ps.setInt(1, idAtencion);
+                ps.executeUpdate();
+                cn.commit();
+            } catch (SQLException e) {
+                cn.rollback();
+                throw e;
+            }
 
             JOptionPane.showMessageDialog(this, "Atención eliminada correctamente.");
             listarAtenciones();
+            cargarCitasPendientes();   // [FIX] la cita vuelve a aparecer en el combo
             limpiar();
             estadoInicial();
 
+        } catch (java.sql.SQLIntegrityConstraintViolationException e) {
+            // [FIX] receta.id_atencion apunta a esta atención: antes salía el error crudo de MySQL
+            JOptionPane.showMessageDialog(this,
+                    "No se puede eliminar: esta atención ya tiene una receta.\nElimine primero la receta en el módulo Recetas.");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al eliminar: " + e.getMessage());
         }
@@ -312,7 +363,7 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(20, 20, 20)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addComponent(jLabel1)
                                                 .addGap(18, 18, 18)
@@ -324,16 +375,16 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jLabel3)
-                                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE))
                                                 .addGap(18, 18, 18)
                                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jLabel4)
-                                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE))
                                                 .addGap(18, 18, 18)
                                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jLabel5)
-                                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addContainerGap(20, Short.MAX_VALUE))
+                                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE))))
+                                .addContainerGap(20, 20))
         );
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -350,11 +401,11 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
                                         .addComponent(jLabel4)
                                         .addComponent(jLabel5))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                                .addContainerGap(15, Short.MAX_VALUE))
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))
+                                .addContainerGap(15, 15))
         );
 
         btnNuevo.setText("Nuevo");
@@ -422,22 +473,22 @@ public class FrmAtencion extends javax.swing.JInternalFrame {
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(15, 15, 15)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jScrollPane4))
-                                .addContainerGap(15, Short.MAX_VALUE))
+                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap(15, 15))
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(15, 15, 15)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(15, Short.MAX_VALUE))
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                                .addContainerGap(15, 15))
         );
 
         Estilo.ventanaModulo(this, "Gestión de atención médica",

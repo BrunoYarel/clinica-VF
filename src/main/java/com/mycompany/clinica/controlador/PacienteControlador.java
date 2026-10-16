@@ -9,47 +9,49 @@ import java.sql.SQLException;
 
 /** Operaciones de base de datos para pacientes e historial clínico. */
 public class PacienteControlador {
-    
+
     // Método para insertar un paciente en XAMPP
     public boolean registrarPaciente(Paciente paciente) {
-        String sql = "INSERT INTO PACIENTE (nombres, apellidos, documento, fecha_nacimiento, telefono, email) VALUES (?, ?, ?, ?, ?, ?)";
-        
+        // [FIX] La tabla se llamaba "PACIENTE" (mayúsculas): en MySQL de Linux/Mac distingue mayúsculas y
+        // el INSERT fallaba ("Table clinica.PACIENTE doesn't exist"). script.sql la crea como "paciente".
+        String sql = "INSERT INTO paciente (nombres, apellidos, documento, fecha_nacimiento, telefono, email) VALUES (?, ?, ?, ?, ?, ?)";
+
         try (Connection con = Conexion.conectar();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            
+
             ps.setString(1, paciente.getNombres());
             ps.setString(2, paciente.getApellidos());
             ps.setString(3, paciente.getDocumento());
             ps.setString(4, paciente.getFechaNacimiento());
             ps.setString(5, paciente.getTelefono());
             ps.setString(6, paciente.getEmail());
-            
+
             int filasAfectadas = ps.executeUpdate();
             return filasAfectadas > 0; // Retorna true si se guardó con éxito
-            
+
         } catch (SQLException e) {
             System.out.println("Error al registrar paciente: " + e.getMessage());
             return false;
         }
     }
 
-        // Método actualizado en PacienteControlador.java para mostrar todo por defecto
+    // Método actualizado en PacienteControlador.java para mostrar todo por defecto
     public javax.swing.table.DefaultTableModel consultarHistorialClinico(String dni, int idMedicoLogueado, String rolUsuario) {
         String[] titulos = {"Paciente (DNI)", "Fecha/Hora", "Motivo Cita", "Síntomas", "Diagnóstico", "Observaciones"};
         javax.swing.table.DefaultTableModel modeloTabla = new javax.swing.table.DefaultTableModel(null, titulos);
-        
+
         // Consulta base uniendo Paciente, Cita y Atencion (Agregamos el DNI y Nombre del paciente al inicio)
         String sql = "SELECT "
-        + "CONCAT(p.nombres, ' ', p.apellidos, ' (', p.documento, ')') AS datos_paciente, "
-        + "CONCAT(c.fecha_cita, ' ', c.hora_cita) AS fecha_hora_cita, "
-        + "c.motivo, "
-        + "a.sintomas, "
-        + "a.diagnostico, "
-        + "a.observaciones "
-        + "FROM paciente p "
-        + "INNER JOIN cita c ON p.id_paciente = c.id_paciente "
-        + "INNER JOIN atencion a ON c.id_cita = a.id_cita "
-        + "WHERE 1=1"; // Truco SQL para poder concatenar ANDs dinámicamente
+                + "CONCAT(p.nombres, ' ', p.apellidos, ' (', p.documento, ')') AS datos_paciente, "
+                + "CONCAT(c.fecha_cita, ' ', c.hora_cita) AS fecha_hora_cita, "
+                + "c.motivo, "
+                + "a.sintomas, "
+                + "a.diagnostico, "
+                + "a.observaciones "
+                + "FROM paciente p "
+                + "INNER JOIN cita c ON p.id_paciente = c.id_paciente "
+                + "INNER JOIN atencion a ON c.id_cita = a.id_cita "
+                + "WHERE 1=1"; // Truco SQL para poder concatenar ANDs dinámicamente
 
         // Filtro por DNI solo si el usuario escribió algo
         if (dni != null && !dni.trim().isEmpty()) {
@@ -60,22 +62,22 @@ public class PacienteControlador {
         if ("Medico".equalsIgnoreCase(rolUsuario) || "Médico".equalsIgnoreCase(rolUsuario)) {
             sql += " AND c.id_medico = ?";
         }
-                     
+
         try (Connection con = Conexion.conectar();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            
+
             int paramIndex = 1;
-            
+
             // Inyectar DNI si corresponde
             if (dni != null && !dni.trim().isEmpty()) {
                 ps.setString(paramIndex++, dni.trim());
             }
-            
+
             // Inyectar ID Médico si corresponde
             if (rolUsuario.equalsIgnoreCase("Médico") || rolUsuario.equalsIgnoreCase("Medico")) {
                 ps.setInt(paramIndex++, idMedicoLogueado);
             }
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 Object[] fila = new Object[6];
                 while (rs.next()) {
@@ -94,25 +96,25 @@ public class PacienteControlador {
         return modeloTabla;
     }
 
-    
+
     // Método para consultar y listar todos los pacientes
     public javax.swing.table.DefaultTableModel listarPacientes() {
         String[] titulos = {
-            "ID", "Documento", "Nombres", "Apellidos",
-            "Fecha de nacimiento", "Teléfono", "Email"
+                "ID", "Documento", "Nombres", "Apellidos",
+                "Fecha de nacimiento", "Teléfono", "Email"
         };
 
         javax.swing.table.DefaultTableModel modelo =
                 new javax.swing.table.DefaultTableModel(null, titulos) {
-            @Override
-            public boolean isCellEditable(int fila, int columna) {
-                return false;
-            }
-        };
+                    @Override
+                    public boolean isCellEditable(int fila, int columna) {
+                        return false;
+                    }
+                };
 
         String sql = "SELECT id_paciente, documento, nombres, apellidos, "
-                   + "fecha_nacimiento, telefono, email "
-                   + "FROM paciente ORDER BY id_paciente DESC";
+                + "fecha_nacimiento, telefono, email "
+                + "FROM paciente ORDER BY id_paciente DESC";
 
         try (Connection con = Conexion.conectar()) {
             if (con == null) {
@@ -125,13 +127,13 @@ public class PacienteControlador {
 
                 while (rs.next()) {
                     modelo.addRow(new Object[]{
-                        rs.getInt("id_paciente"),
-                        rs.getString("documento"),
-                        rs.getString("nombres"),
-                        rs.getString("apellidos"),
-                        rs.getString("fecha_nacimiento"), 
-                        rs.getString("telefono"),
-                        rs.getString("email")
+                            rs.getInt("id_paciente"),
+                            rs.getString("documento"),
+                            rs.getString("nombres"),
+                            rs.getString("apellidos"),
+                            rs.getString("fecha_nacimiento"),
+                            rs.getString("telefono"),
+                            rs.getString("email")
                     });
                 }
             }
@@ -142,28 +144,28 @@ public class PacienteControlador {
 
         return modelo;
     }
-    
+
     // Buscar pacientes por documento, nombres o apellidos
     public javax.swing.table.DefaultTableModel buscarPacientes(String texto) {
         String[] titulos = {
-            "ID", "Documento", "Nombres", "Apellidos",
-            "Fecha de nacimiento", "Teléfono", "Email"
+                "ID", "Documento", "Nombres", "Apellidos",
+                "Fecha de nacimiento", "Teléfono", "Email"
         };
 
         javax.swing.table.DefaultTableModel modelo =
                 new javax.swing.table.DefaultTableModel(null, titulos) {
-            @Override
-            public boolean isCellEditable(int fila, int columna) {
-                return false;
-            }
-        };
+                    @Override
+                    public boolean isCellEditable(int fila, int columna) {
+                        return false;
+                    }
+                };
 
         String sql = "SELECT id_paciente, documento, nombres, apellidos, "
-                   + "fecha_nacimiento, telefono, email "
-                   + "FROM paciente "
-                   + "WHERE documento LIKE ? OR nombres LIKE ? "
-                   + "OR apellidos LIKE ? "
-                   + "ORDER BY id_paciente DESC";
+                + "fecha_nacimiento, telefono, email "
+                + "FROM paciente "
+                + "WHERE documento LIKE ? OR nombres LIKE ? "
+                + "OR apellidos LIKE ? "
+                + "ORDER BY id_paciente DESC";
 
         try (Connection con = Conexion.conectar()) {
             if (con == null) {
@@ -180,13 +182,13 @@ public class PacienteControlador {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         modelo.addRow(new Object[]{
-                            rs.getInt("id_paciente"),
-                            rs.getString("documento"),
-                            rs.getString("nombres"),
-                            rs.getString("apellidos"),
-                            rs.getString("fecha_nacimiento"), 
-                            rs.getString("telefono"),
-                            rs.getString("email")
+                                rs.getInt("id_paciente"),
+                                rs.getString("documento"),
+                                rs.getString("nombres"),
+                                rs.getString("apellidos"),
+                                rs.getString("fecha_nacimiento"),
+                                rs.getString("telefono"),
+                                rs.getString("email")
                         });
                     }
                 }
@@ -200,8 +202,8 @@ public class PacienteControlador {
 
     public boolean actualizarPaciente(Paciente paciente, int idPaciente) {
         String sql = "UPDATE paciente SET documento = ?, nombres = ?, "
-                   + "apellidos = ?, fecha_nacimiento = ?, telefono = ?, "
-                   + "email = ? WHERE id_paciente = ?";
+                + "apellidos = ?, fecha_nacimiento = ?, telefono = ?, "
+                + "email = ? WHERE id_paciente = ?";
 
         try (Connection con = Conexion.conectar()) {
             if (con == null) {

@@ -1,7 +1,7 @@
-package pe.senati.clinica.service;
+package com.mycompany.clinica.servicio;
 
-import pe.senati.clinica.dao.CitaDAO;
-import pe.senati.clinica.model.Cita;
+import com.mycompany.clinica.dao.CitaDAO;
+import com.mycompany.clinica.modelo.Cita;
 import java.util.List;
 
 

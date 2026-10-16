@@ -1,4 +1,4 @@
-package pe.senati.clinica.model;
+package com.mycompany.clinica.modelo;
 
 public enum EstadoCita {
     PENDIENTE("Pendiente"),

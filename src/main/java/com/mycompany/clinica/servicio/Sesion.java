@@ -14,6 +14,10 @@ public final class Sesion {
     public static final String MEDICO = "Medico";
     public static final String RECEPCIONISTA = "Recepcionista";
 
+    // Estado de la sesión en campos estáticos: es la forma en que los módulos saben quién está conectado
+    // sin pasarse parámetros entre ventanas. Lo escribe Login (UsuarioService.autenticar) y lo leen
+    // Permisos y los módulos. El idMedico sale de aquí y no de lo que se escriba en pantalla, así un
+    // médico solo trabaja con sus propios datos.
     private static int idUsuario;
     private static int idMedico;
     private static String username;

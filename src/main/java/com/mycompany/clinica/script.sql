@@ -103,7 +103,9 @@ CREATE TABLE receta (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 8. DETALLE_RECETA
---  * Tamaños alineados con DlgAtencion.java: dosis hasta 9999.99, unidad 20, frecuencia 100, duración 50.
+--  * Tamaños alineados con FrmReceta.java (módulo Recetas, que es quien llena esta tabla): dosis hasta 9999.99,
+--    unidad 20, frecuencia 100, duración 50.
+--  * uq_detalle_receta_medicamento: un medicamento no se repite dentro de la misma receta.
 CREATE TABLE detalle_receta (
                                 id_detalle_receta INT AUTO_INCREMENT,
                                 id_receta INT NOT NULL,
@@ -113,6 +115,7 @@ CREATE TABLE detalle_receta (
                                 frecuencia VARCHAR(100) NOT NULL,
                                 duracion VARCHAR(50) NOT NULL,
                                 CONSTRAINT pk_detalle_receta PRIMARY KEY (id_detalle_receta),
+                                CONSTRAINT uq_detalle_receta_medicamento UNIQUE (id_receta, id_medicamento),
                                 CONSTRAINT fk_detalle_receta_receta FOREIGN KEY (id_receta) REFERENCES receta(id_receta) ON DELETE CASCADE,
                                 CONSTRAINT fk_detalle_receta_medicamento FOREIGN KEY (id_medicamento) REFERENCES medicamento(id_medicamento)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

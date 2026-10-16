@@ -1,4 +1,4 @@
-package com.mycompany.clinica;
+package com.mycompany.clinica.vista;
 
 import com.mycompany.clinica.vista.Estilo;
 

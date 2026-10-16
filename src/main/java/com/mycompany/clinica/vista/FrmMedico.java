@@ -1,4 +1,7 @@
-package com.mycompany.clinica;
+package com.mycompany.clinica.vista;
+
+import com.mycompany.clinica.Conexion;
+import com.mycompany.clinica.servicio.Permisos;
 
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle;
@@ -29,6 +32,16 @@ public class FrmMedico extends javax.swing.JInternalFrame {
         cargarComboEspecialidades();
         listarMedicos();
         this.setSize(1080, 600);
+
+        // [FIX permisos] Permisos.puedeGestionarMedicos() existía pero nadie lo usaba: el Recepcionista (que
+        // ve este módulo solo para consultar el ID de médico al agendar citas) podía crear, editar y eliminar
+        // médicos. Si no es Admin se ocultan los botones que modifican datos; la tabla y "Ver vínculos" siguen.
+        if (!Permisos.puedeGestionarMedicos()) {
+            btnGuardar.setVisible(false);
+            btnEditar.setVisible(false);
+            btnEliminar.setVisible(false);
+            btnGestionarEspecialidad.setVisible(false);
+        }
     }
 
     public void cargarComboEspecialidades() {
@@ -71,13 +84,13 @@ public class FrmMedico extends javax.swing.JInternalFrame {
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
                 Object[] fila = {
-                    rs.getInt("id_medico"),
-                    rs.getString("nombres"),
-                    rs.getString("apellidos"),
-                    rs.getString("cmp"),
-                    rs.getString("telefono"),
-                    rs.getString("email"),
-                    rs.getString("especialidad")
+                        rs.getInt("id_medico"),
+                        rs.getString("nombres"),
+                        rs.getString("apellidos"),
+                        rs.getString("cmp"),
+                        rs.getString("telefono"),
+                        rs.getString("email"),
+                        rs.getString("especialidad")
                 };
                 modeloTabla.addRow(fila);
             }
@@ -195,85 +208,85 @@ public class FrmMedico extends javax.swing.JInternalFrame {
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(35, 35, 35)
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel4)
-                                .addComponent(jLabel5)
-                                .addComponent(jLabel6))
-                            .addGap(25, 25, 25)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtNombres, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-                                .addComponent(txtApellidos)
-                                .addComponent(txtCmp)
-                                .addComponent(txtTelefono)
-                                .addComponent(txtEmail)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(cboEspecialidad, GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(btnGestionarEspecialidad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                .addComponent(btnGuardar, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                                .addComponent(btnEliminar, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
-                            .addGap(10, 10, 10)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                .addComponent(btnEditar, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                                .addComponent(btnLimpiar, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
-                            .addGap(10, 10, 10)
-                            .addComponent(btnVerVinculos, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)))
-                    .addGap(35, 35, 35)
-                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
-                    .addGap(35, 35, 35))
+                                .addGap(35, 35, 35)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel1)
+                                                        .addComponent(jLabel2)
+                                                        .addComponent(jLabel3)
+                                                        .addComponent(jLabel4)
+                                                        .addComponent(jLabel5)
+                                                        .addComponent(jLabel6))
+                                                .addGap(25, 25, 25)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(txtNombres, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                                                        .addComponent(txtApellidos)
+                                                        .addComponent(txtCmp)
+                                                        .addComponent(txtTelefono)
+                                                        .addComponent(txtEmail)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(cboEspecialidad, GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(btnGestionarEspecialidad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(btnGuardar, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                                                        .addComponent(btnEliminar, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
+                                                .addGap(10, 10, 10)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(btnEditar, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                                                        .addComponent(btnLimpiar, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
+                                                .addGap(10, 10, 10)
+                                                .addComponent(btnVerVinculos, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)))
+                                .addGap(35, 35, 35)
+                                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
+                                .addGap(35, 35, 35))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(35, 35, 35)
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel1)
-                                .addComponent(txtNombres, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel2)
-                                .addComponent(txtApellidos, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel3)
-                                .addComponent(txtCmp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel4)
-                                .addComponent(txtTelefono, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel5)
-                                .addComponent(txtEmail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel6)
-                                .addComponent(cboEspecialidad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnGestionarEspecialidad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addGap(25, 25, 25)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(btnGuardar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnEditar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addGap(10, 10, 10)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(btnEliminar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnLimpiar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnVerVinculos, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)))
-                    .addGap(35, 35, 35))
+                                .addGap(35, 35, 35)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel1)
+                                                        .addComponent(txtNombres, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel2)
+                                                        .addComponent(txtApellidos, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel3)
+                                                        .addComponent(txtCmp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel4)
+                                                        .addComponent(txtTelefono, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel5)
+                                                        .addComponent(txtEmail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel6)
+                                                        .addComponent(cboEspecialidad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(btnGestionarEspecialidad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addGap(25, 25, 25)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(btnGuardar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(btnEditar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addGap(10, 10, 10)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(btnEliminar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(btnLimpiar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(btnVerVinculos, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)))
+                                .addGap(35, 35, 35))
         );
         Estilo.ventanaModulo(this, "Gestión de médicos", "Registra o edita médicos");
         pack();
@@ -386,7 +399,7 @@ public class FrmMedico extends javax.swing.JInternalFrame {
                     if (totalCitas > 0) {
                         JOptionPane.showMessageDialog(this,
                                 "El médico tiene " + totalCitas + " cita(s) vinculada(s).\n"
-                                + "Debe reasignar o eliminar esas citas primero.",
+                                        + "Debe reasignar o eliminar esas citas primero.",
                                 "Restricción de Eliminación", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(this,
@@ -565,51 +578,51 @@ public class FrmMedico extends javax.swing.JInternalFrame {
             GroupLayout layout = new GroupLayout(getContentPane());
             getContentPane().setLayout(layout);
             layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblNombreEsp)
-                                    .addComponent(lblDescripcionEsp))
-                                .addGap(20, 20, 20)
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtNombreEsp, GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                                    .addComponent(txtDescripcionEsp, GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnGuardarEsp, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10)
-                                .addComponent(btnEditarEsp, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10)
-                                .addComponent(btnEliminarEsp, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10)
-                                .addComponent(btnLimpiarEsp, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lblHistorialEsp)
-                            .addComponent(scrollEsp, GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE))
-                        .addGap(30, 30, 30))
+                                    .addGap(30, 30, 30)
+                                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                            .addComponent(lblNombreEsp)
+                                                            .addComponent(lblDescripcionEsp))
+                                                    .addGap(20, 20, 20)
+                                                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                            .addComponent(txtNombreEsp, GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                                                            .addComponent(txtDescripcionEsp, GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)))
+                                            .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(btnGuardarEsp, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
+                                                    .addGap(10, 10, 10)
+                                                    .addComponent(btnEditarEsp, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
+                                                    .addGap(10, 10, 10)
+                                                    .addComponent(btnEliminarEsp, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
+                                                    .addGap(10, 10, 10)
+                                                    .addComponent(btnLimpiarEsp, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(lblHistorialEsp)
+                                            .addComponent(scrollEsp, GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE))
+                                    .addGap(30, 30, 30))
             );
             layout.setVerticalGroup(
-                layout.createSequentialGroup()
-                    .addGap(30, 30, 30)
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblNombreEsp)
-                        .addComponent(txtNombreEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGap(15, 15, 15)
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblDescripcionEsp)
-                        .addComponent(txtDescripcionEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGap(20, 20, 20)
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnGuardarEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnEditarEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnEliminarEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnLimpiarEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGap(25, 25, 25)
-                    .addComponent(lblHistorialEsp)
-                    .addGap(8, 8, 8)
-                    .addComponent(scrollEsp, 180, 220, Short.MAX_VALUE)
-                    .addGap(30, 30, 30)
+                    layout.createSequentialGroup()
+                            .addGap(30, 30, 30)
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblNombreEsp)
+                                    .addComponent(txtNombreEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                            .addGap(15, 15, 15)
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblDescripcionEsp)
+                                    .addComponent(txtDescripcionEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                            .addGap(20, 20, 20)
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btnGuardarEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnEditarEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnEliminarEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnLimpiarEsp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                            .addGap(25, 25, 25)
+                            .addComponent(lblHistorialEsp)
+                            .addGap(8, 8, 8)
+                            .addComponent(scrollEsp, 180, 220, Short.MAX_VALUE)
+                            .addGap(30, 30, 30)
             );
 
             Estilo.ventanaModulo(this, "Registro de especialidades",
@@ -631,10 +644,10 @@ public class FrmMedico extends javax.swing.JInternalFrame {
                  ResultSet rs = st.executeQuery(sql)) {
                 while (rs.next()) {
                     Object[] fila = {
-                        rs.getInt("id_especialidad"),
-                        rs.getString("nombre"),
-                        rs.getString("descripcion"),
-                        rs.getInt("medicos")
+                            rs.getInt("id_especialidad"),
+                            rs.getString("nombre"),
+                            rs.getString("descripcion"),
+                            rs.getInt("medicos")
                     };
                     modeloEsp.addRow(fila);
                 }
@@ -755,7 +768,7 @@ public class FrmMedico extends javax.swing.JInternalFrame {
                     if (rs.next() && rs.getInt(1) > 0) {
                         JOptionPane.showMessageDialog(this,
                                 "Hay " + rs.getInt(1) + " médico(s) con esta especialidad.\n"
-                                + "Reasígnalos a otra especialidad antes de eliminarla.",
+                                        + "Reasígnalos a otra especialidad antes de eliminarla.",
                                 "Restricción de Eliminación", JOptionPane.INFORMATION_MESSAGE);
                         return;
                     }
